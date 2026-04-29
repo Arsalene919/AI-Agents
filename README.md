@@ -147,7 +147,7 @@ cd 05_research_assistant
 streamlit run ResearchAssistant.py
 ```
 
-**Live demo:** [your-app.streamlit.app](https://your-app.streamlit.app) ← update after deployment
+**Live demo:** [ai-agents.streamlit.app](https://ai-agents-lphtojmdc7avvhccti6zdq.streamlit.app/) ← update after deployment
 
 ---
 
