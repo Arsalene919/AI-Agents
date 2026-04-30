@@ -62,14 +62,21 @@ def write_report(topic, analyse):
     )
     return response.choices[0].message.content
 
+def clean_for_pdf(text):
+    """Supprime les caractères non supportés par Helvetica"""
+    return text.encode("latin-1", errors="replace").decode("latin-1")
+
 #exporter en PDF
 def export_to_pdf(topic, report):
     pdf = FPDF()
     pdf.set_margins(15, 15, 15)  # ← marges explicites left, top, right
     pdf.add_page()
-    pdf.set_font("Helvetica", size=12)
-    pdf.multi_cell(0, 10, topic)
-    pdf.set_font("Helvetica", size=10)
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.set_font("Helvetica", "B", size=16)
+    pdf.set_text_color(40, 40, 40)
+    pdf.multi_cell(0, 10, clean_for_pdf(topic))
+    pdf.ln(2)
+    pdf.set_font("Helvetica", "", size=10)
     pdf.set_text_color(120, 120, 120)
     pdf.cell(0, 6, f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align="R")
     pdf.ln(4)
@@ -78,7 +85,8 @@ def export_to_pdf(topic, report):
     pdf.ln(6)
     
     for line in report.split("\n"):
-        clean = line.replace("**", "").replace("##", "").replace("###", "").replace("- ", " ° ").strip()
+        clean = (line.replace("**", "").replace("##", "").replace("###", "").replace("- ", " ° ").strip())
+        clean = clean_for_pdf(clean)
         if not clean:
             pdf.ln(2)
             continue
