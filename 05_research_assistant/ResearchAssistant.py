@@ -3,10 +3,14 @@ from openai import OpenAI
 from fpdf import FPDF
 import json, requests, io
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-TAVILY_API_KEY = st.secrets["TAVILY_API_KEY"]
+load_dotenv()  # Charger les variables d'environnement depuis le fichier .env
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY") or st.secrets["OPENAI_API_KEY"]
+TAVILY_API_KEY = os.getenv("TAVILY_API_KEY") or st.secrets["TAVILY_API_KEY"]
+client = OpenAI(api_key=OPENAI_API_KEY)
 #Initialisation session state 
 if "history" not in st.session_state:
     st.session_state.history = []
