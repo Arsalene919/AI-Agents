@@ -1,6 +1,6 @@
 # 🤖 AI Agents project
 
-> A collection of 5 AI agent projects built with OpenAI API — from beginner to production-ready.
+> A collection of 5 AI agent projects built with OpenAI API, from beginner to production-ready.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-green?logo=openai)
@@ -10,7 +10,7 @@
 
 ## 📌 Overview
 
-This repository demonstrates core AI agent concepts — **tool use, function calling, RAG, memory, and multi-step pipelines**, through 5 progressively complex projects.
+This repository demonstrates core AI agent concepts, **tool use, function calling, RAG, memory, and multi-step pipelines**, through 5 progressively complex projects.
 
 | # | Project | Key Concept | Stack |
 |---|---------|-------------|-------|
@@ -76,7 +76,7 @@ ai-agents-portfolio/
 
 ---
 
-## Project 1 — Web Search Agent
+## Project 1: Web Search Agent
 
 The agent receives a question, searches the web, and returns a summarized answer.
 
@@ -91,7 +91,7 @@ python websearchagents.py
 
 ---
 
-## Project 2 — Calculator Agent
+## Project 2: Calculator Agent
 
 The agent detects math problems and delegates computation to a real Python function, eliminating hallucinations.
 
@@ -106,7 +106,7 @@ python intelligentCalculator.py
 
 ---
 
-## Project 3 — Document Analyst
+## Project 3: Document Analyst
 
 Upload a PDF and ask questions about it. The agent reads the document and answers based strictly on its content.
 
@@ -121,7 +121,7 @@ python pdfReader.py
 
 ---
 
-## Project 4 — Personal Assistant
+## Project 4: Personal Assistant
 
 A conversational agent that autonomously selects from multiple tools: weather, web search, or calculator, and remembers the full conversation.
 
@@ -136,7 +136,7 @@ python agent.py
 
 ---
 
-## Project 5 — Research Assistant *(deployed)*
+## Project 5: Research Assistant *(deployed)*
 
 The most complete project: a full pipeline that searches the web, analyzes sources, and writes a structured report with a Streamlit UI.
 
