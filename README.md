@@ -48,7 +48,7 @@ OPENWEATHER_API_KEY=...
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ai-agents-portfolio/
@@ -68,7 +68,16 @@ ai-agents-portfolio/
 │
 ├── 05_research_assistant/
 │   └── ResearchAssistant.py                # Full Streamlit app
-│
+|
+├── 06_fastapi_backend/
+|   └── database.py
+|   └── models.py
+|   └── schemas.py
+|   └── services.py
+|   └── main.py
+|   └── docker-compose.yml
+|
+|
 ├── .gitignore
 ├── requirements.txt
 └── README.md

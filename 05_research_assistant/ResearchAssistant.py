@@ -5,6 +5,7 @@ import json, requests, io
 from datetime import datetime
 from dotenv import load_dotenv
 import os
+from drive_export import get_auth_url, exchange_code, upload_to_user_drive
 
 load_dotenv()  # Charger les variables d'environnement depuis le fichier .env
 
@@ -73,7 +74,7 @@ def clean_for_pdf(text):
 #exporter en PDF
 def export_to_pdf(topic, report):
     pdf = FPDF()
-    pdf.set_margins(15, 15, 15)  # ← marges explicites left, top, right
+    pdf.set_margins(15, 15, 15)  # marges explicites left, top, right
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.set_font("Helvetica", "B", size=16)
@@ -112,6 +113,15 @@ def export_to_pdf(topic, report):
 
 #interface Streamlit
 st.set_page_config(page_title="Your research Assistant", page_icon="🔍", layout="centered")
+#Gestion de retour  OAuth
+query_params = st.query_params
+if "code" in query_params and "drive_creds" not in st.session_state:
+    try:
+        exchange_code(query_params["code"])
+        st.query_params.clear()
+        st.success("✓ Connected to Google Drive!")
+    except Exception as e:
+        st.error(f"Drive connection failed: {e}")
 st.title("🔍 Research Assistant")
 tab1, tab2 = st.tabs([f"New report", f"History ({len(st.session_state.history)})"])
 
@@ -142,17 +152,32 @@ with tab1:
         
         st.divider()
         st.markdown(report)
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)   # ← 3 colonnes au lieu de 2
         with col1:
             st.download_button(
-                "Download Report (PDF)",
-                data=pdf_bytes, file_name = f"report_{topic[:30]}.pdf", mime="application/pdf"
+                "Download PDF",
+                data=pdf_bytes, file_name=f"report_{topic[:30]}.pdf",
+                mime="application/pdf"
             )
         with col2:
             st.download_button(
-                "Download Report (Markdown)",
-                data=report, file_name = f"report_{topic[:30]}.md", mime="text/markdown"
+                "Download Markdown",
+                data=report, file_name=f"report_{topic[:30]}.md",
+                mime="text/markdown"
             )
+        with col3:
+            if "drive_creds" not in st.session_state:
+                auth_url = get_auth_url()
+                st.link_button("☁ Connect Drive", auth_url)
+            else:
+                if st.button("☁ Save to Drive", key="drive_new"):
+                    with st.spinner("Uploading to your Drive..."):
+                        try:
+                            link = upload_to_user_drive(
+                                f"report_{topic[:30]}.md", report)
+                            st.success(f"Saved! [Open in Drive]({link})")
+                        except Exception as e:
+                            st.error(f"Upload failed: {e}")
 with tab2:
     if not st.session_state.history:
         st.info("No reports generated yet. Go to the 'New report' tab to create your first report.")
@@ -161,32 +186,21 @@ with tab2:
             with st.expander(f"{r['topic']} _ {r['date']}"):
                 st.caption(f"{r['sources']} sources - {r['words']} words")
                 st.markdown(r["report"])
-                st.download_button(
-                    "Download Report (PDF)", r["pdf"], file_name = f"report_{r['topic'][:30]}.pdf", mime="application/pdf", key=f"dl_{i}")
-# st.caption("Enter a topic --> the agent will search the web, analyze the sources and write a report.")
-# topic = st.text_input("Research topic:", placeholder="e.g. The impact of AI on society")
-# if st.button("Generate Report", type="primary") and topic:
-#     with st.status("Searching the web...", expanded=True) as status:
-#         st.write("🔍 Searching the web for relevant sources...")
-#         sources = web_search(topic)
-#         st.write(f"{len(sources.split())} sources found.")
-        
-#         st.write("🧠 Analyzing sources...")
-#         analyse = sources_analysis(topic, sources)
-#         st.write("Analysis completed.")
-        
-#         st.write("📝 Writing report...")
-#         report = write_report(topic, analyse)
-#         st.write("Report generated.")
-        
-#         status.update(label="Report generated successfully!", state="complete")
-        
-#     st.divider()
-#     st.markdown(report)
-    
-#     st.download_button(
-#         "Download Report",
-#         data=report,
-#         file_name = f"report_{topic[:30]}.md",
-#         mime="text/markdown"
-#     )
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.download_button(
+                        "Download PDF", r["pdf"],
+                        file_name=f"report_{r['topic'][:30]}.pdf",
+                        mime="application/pdf", key=f"dl_{i}")
+                with col2:
+                    if "drive_creds" in st.session_state:
+                        if st.button("☁ Save to Drive", key=f"drive_{i}"):
+                            with st.spinner("Uploading..."):
+                                try:
+                                    link = upload_to_user_drive(
+                                        f"report_{r['topic'][:30]}.md",
+                                        r["report"])
+                                    st.success(f"Saved! [Open in Drive]({link})")
+                                except Exception as e:
+                                    st.error(f"Upload failed: {e}")

@@ -132,6 +132,7 @@ def assistant(question):
 
 #Test
 print(assistant("What is the weather in Paris?"))
+print(assistant("And in Lyon?"))
 print(assistant("Search the web for recent news about OpenAI."))
 print(assistant("Calculate the expression: (5^2 + sqrt(16)) * pi"))
 print(assistant("What is the weather in New York?"))
