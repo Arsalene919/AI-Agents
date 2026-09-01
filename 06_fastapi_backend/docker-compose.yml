@@ -3,11 +3,14 @@ services:
     build: .
     ports:
       - "8000:8000"
+    volumes:
+      - .:/app
     env_file: C:\Users\Khach\OneDrive\Desktop\AI-Agents\.env
     depends_on:
       - db
     environment: 
       - DATABASE_URL=postgresql://user:password@db/reports_db
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
   db:
     image: postgres:15
     environment:
